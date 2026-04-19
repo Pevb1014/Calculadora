@@ -8,7 +8,10 @@
 </head>
 <body>
   <main class="calculator" aria-label="Calculadora básica">
-    <input id="display" class="display" type="text" value="0" readonly aria-label="Pantalla de la calculadora" />
+    <div class="display-wrapper" aria-live="polite">
+      <div id="expression" class="expression" aria-label="Operación en curso"></div>
+      <input id="display" class="display" type="text" value="0" readonly aria-label="Pantalla de la calculadora" />
+    </div>
 
     <div class="buttons">
       <button class="btn btn-clear" data-action="clear">C</button>

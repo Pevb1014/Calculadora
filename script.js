@@ -1,5 +1,6 @@
 const SELECTORS = {
   display: 'display',
+  expression: 'expression',
   buttons: '.buttons',
 };
 
@@ -18,6 +19,13 @@ const KEYBOARD_MAP = {
   '.': ACTIONS.DECIMAL,
 };
 
+const OPERATOR_SYMBOLS = {
+  '+': '+',
+  '-': '−',
+  '*': '×',
+  '/': '÷',
+};
+
 function createInitialState() {
   return {
     currentValue: '0',
@@ -29,23 +37,50 @@ function createInitialState() {
 }
 
 class Calculator {
-  constructor(displayElement) {
+  constructor(displayElement, expressionElement) {
     this.displayElement = displayElement;
+    this.expressionElement = expressionElement;
     this.state = createInitialState();
     this.updateDisplay(this.state.currentValue);
+    this.updateExpression('');
   }
 
   updateDisplay(value) {
     this.displayElement.value = value;
   }
 
+  updateExpression(text) {
+    this.expressionElement.textContent = text;
+  }
+
   resetState() {
     this.state = createInitialState();
     this.updateDisplay(this.state.currentValue);
+    this.updateExpression('');
   }
 
   get hasPendingOperation() {
     return this.state.currentOperator !== null && this.state.previousValue !== null;
+  }
+
+  getOperatorSymbol(operator) {
+    return OPERATOR_SYMBOLS[operator] || operator;
+  }
+
+  refreshExpression() {
+    if (!this.hasPendingOperation) {
+      this.updateExpression('');
+      return;
+    }
+
+    const symbol = this.getOperatorSymbol(this.state.currentOperator);
+
+    if (this.state.shouldResetDisplay) {
+      this.updateExpression(`${this.state.previousValue} ${symbol}`);
+      return;
+    }
+
+    this.updateExpression(`${this.state.previousValue} ${symbol} ${this.state.currentValue}`);
   }
 
   appendNumber(number) {
@@ -57,6 +92,7 @@ class Calculator {
       this.state.currentValue = number;
       this.state.shouldResetDisplay = false;
       this.updateDisplay(this.state.currentValue);
+      this.refreshExpression();
       return;
     }
 
@@ -64,6 +100,7 @@ class Calculator {
       this.state.currentValue === '0' ? number : this.state.currentValue + number;
 
     this.updateDisplay(this.state.currentValue);
+    this.refreshExpression();
   }
 
   addDecimalPoint() {
@@ -75,12 +112,14 @@ class Calculator {
       this.state.currentValue = '0.';
       this.state.shouldResetDisplay = false;
       this.updateDisplay(this.state.currentValue);
+      this.refreshExpression();
       return;
     }
 
     if (!this.state.currentValue.includes('.')) {
       this.state.currentValue += '.';
       this.updateDisplay(this.state.currentValue);
+      this.refreshExpression();
     }
   }
 
@@ -97,6 +136,7 @@ class Calculator {
     this.state.previousValue = this.state.currentValue;
     this.state.currentOperator = operator;
     this.state.shouldResetDisplay = true;
+    this.refreshExpression();
   }
 
   calculate() {
@@ -106,11 +146,15 @@ class Calculator {
 
     const previous = Number(this.state.previousValue);
     const current = Number(this.state.currentValue);
-    const result = this.performOperation(previous, current, this.state.currentOperator);
+    const operator = this.state.currentOperator;
+    const result = this.performOperation(previous, current, operator);
 
     if (result === null) {
       return;
     }
+
+    const symbol = this.getOperatorSymbol(operator);
+    this.updateExpression(`${this.state.previousValue} ${symbol} ${this.state.currentValue} =`);
 
     this.state.currentValue = this.formatResult(result);
     this.state.previousValue = null;
@@ -145,6 +189,7 @@ class Calculator {
   showError(message) {
     this.state.errorState = true;
     this.updateDisplay(message);
+    this.updateExpression('');
   }
 
   handleAction(action, value) {
@@ -193,8 +238,9 @@ function mapKeyboardEventToAction(key) {
 
 function initializeCalculator() {
   const display = document.getElementById(SELECTORS.display);
+  const expression = document.getElementById(SELECTORS.expression);
   const buttons = document.querySelector(SELECTORS.buttons);
-  const calculator = new Calculator(display);
+  const calculator = new Calculator(display, expression);
 
   buttons.addEventListener('click', (event) => {
     const target = event.target;
