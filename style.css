@@ -1,0 +1,124 @@
+:root {
+  --bg-1: #0f172a;
+  --bg-2: #1e293b;
+  --card: rgba(15, 23, 42, 0.78);
+  --card-border: rgba(148, 163, 184, 0.28);
+  --text: #e2e8f0;
+  --display-bg: rgba(15, 23, 42, 0.9);
+  --btn: #334155;
+  --btn-hover: #475569;
+  --operator: #2563eb;
+  --operator-hover: #3b82f6;
+  --equals: #16a34a;
+  --equals-hover: #22c55e;
+  --clear: #dc2626;
+  --clear-hover: #ef4444;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at 20% 20%, #334155 0%, transparent 35%),
+    radial-gradient(circle at 80% 10%, #1d4ed8 0%, transparent 28%),
+    linear-gradient(135deg, var(--bg-1), var(--bg-2));
+}
+
+.calculator {
+  width: min(92vw, 360px);
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 18px 35px rgba(2, 6, 23, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.display {
+  width: 100%;
+  height: 74px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 14px;
+  padding: 0 14px;
+  margin-bottom: 14px;
+  font-size: 2rem;
+  text-align: right;
+  letter-spacing: 0.4px;
+  color: #f8fafc;
+  background: var(--display-bg);
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.btn {
+  height: 56px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--btn);
+  color: #f8fafc;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: inset 0 -2px 0 rgba(15, 23, 42, 0.45);
+  transition: transform 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
+}
+
+.btn:hover {
+  background: var(--btn-hover);
+}
+
+.btn:active {
+  transform: translateY(1px) scale(0.99);
+  box-shadow: inset 0 -1px 0 rgba(15, 23, 42, 0.45);
+}
+
+.btn-operator {
+  background: var(--operator);
+}
+
+.btn-operator:hover {
+  background: var(--operator-hover);
+}
+
+.btn-equals {
+  background: var(--equals);
+}
+
+.btn-equals:hover {
+  background: var(--equals-hover);
+}
+
+.btn-clear {
+  background: var(--clear);
+}
+
+.btn-clear:hover {
+  background: var(--clear-hover);
+}
+
+.btn-zero {
+  grid-column: span 4;
+}
+
+@media (max-width: 380px) {
+  .display {
+    font-size: 1.75rem;
+  }
+
+  .btn {
+    height: 52px;
+    font-size: 1.1rem;
+  }
+}
